@@ -89,7 +89,7 @@ def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapp
     for user_id in user_ids:
 
         t_idx = {value: key for key, value in mapping.items()}
-        u_idx = [int(t_idx[x]) for x in train.tocsr()[user_id].indices]
+        u_idx = [x for x in train.tocsr()[user_id].indices]
         known_positives = data_meta.loc[u_idx, name]  # may need change
         if tag is not None:
             known_tags = data_meta.loc[u_idx, tag]  # get item tags.
@@ -99,7 +99,7 @@ def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapp
 
         scores = model.predict(user_id, np.arange(n_items), user_features=user_features, item_features=item_features,
                                num_threads=num_threads)
-        i_idx = [int(t_idx[x]) for x in np.argsort(-scores)]
+        i_idx = [x for x in np.argsort(-scores)]
         top_items = data_meta.loc[i_idx, name]
         if tag is not None:
             top_tags = data_meta.loc[i_idx, tag]  # get item tags.
@@ -142,7 +142,7 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
     for user_id in user_ids:
 
         t_idx = {value: key for key, value in mapping.items()}
-        u_idx = [int(t_idx[x]) for x in test.tocsr()[user_id].indices]
+        u_idx = [x for x in test.tocsr()[user_id].indices]
 
         known_positives = data_meta.loc[u_idx, name]  # may need change
 
@@ -162,7 +162,7 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
             scores = model.predict(user_id, np.arange(n_items), user_features=user_features,
                                    item_features=item_features,
                                    num_threads=num_threads)
-            i_idx = [int(t_idx[x]) for x in np.argsort(-scores)]
+            i_idx = [x for x in np.argsort(-scores)]
             top_items = data_meta.loc[i_idx, name]
             if tag is not None:
                 top_tags = data_meta.loc[i_idx, tag]  # get item tags.
@@ -171,7 +171,7 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
             item_ids = np.delete(np.arange(n_items), train.tocsr()[user_id].indices)
             scores = model.predict(user_id, item_ids, user_features=user_features, item_features=item_features,
                                    num_threads=num_threads)
-            i_idx = [int(t_idx[x]) for x in np.argsort(-scores)]
+            i_idx = [x for x in np.argsort(-scores)]
             top_items = data_meta.loc[i_idx, name]
             if tag is not None:
                 top_tags = data_meta.loc[i_idx, tag]  # get item tags.
