@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from lightfm.evaluation import precision_at_k,auc_score
 import scipy
 import time
+from IPython.display import Markdown, display
 
 
 def train_test_split(ratings, split_count, fraction=None):
@@ -62,7 +63,9 @@ def train_test_split(ratings, split_count, fraction=None):
     assert (train.multiply(test).nnz == 0)
     return train.tocsr(), test.tocsr(), user_index
 
-
+def printmd(string):
+    display(Markdown(string))
+    
 def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapping, tag=None, user_features=None,
                                 item_features=None, num_threads=2):
     n_users, n_items = train.shape
@@ -104,8 +107,8 @@ def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapp
         if tag is not None:
             top_tags = data_meta.loc[i_idx, tag]  # get item tags.
 
-        print("User %s" % user_id)
-        print("     Known positives:")
+        printmd("**User %s**" % user_id)
+        printmd("**Known positives:**")
 
         if tag is not None:
             for x in range(len(known_positives)):
@@ -114,7 +117,7 @@ def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapp
             for x in known_positives[:len(known_positives)]:
                 print("        %s" % x)
 
-        print("     Recommended:")
+        printmd("**Recommended:**")
         cnt = 0
         if tag is not None:
             for x in range(k):
@@ -128,10 +131,11 @@ def sample_train_recommendation(model, train, data_meta, user_ids, k, name, mapp
                 if (x in known_positives.values):
                     cnt += 1
                     print('This one clicked')
-        print('cnt: ' + str(cnt))
-        print('k_p: ' + str(len(known_positives)))
+        #printmd('*cnt: *' + str(cnt))
+        printmd('*k_p: %s*'%str(len(known_positives)))
         p_k = cnt / k
-        print('precicion at k : ' + str(p_k))
+        printmd('*precicion at k : %s*'%str(p_k))
+        print('----------------------------------------------------------------------')
 
 
 def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name, mapping, tag=None,
@@ -140,7 +144,9 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
     n_users, n_items = test.shape
 
     for user_id in user_ids:
-
+        
+        printmd("**User %s**" % user_id)
+        
         t_idx = {value: key for key, value in mapping.items()}
         u_idx = [x for x in test.tocsr()[user_id].indices]
 
@@ -176,8 +182,8 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
             if tag is not None:
                 top_tags = data_meta.loc[i_idx, tag]  # get item tags.
 
-        print("User %s" % user_id)
-        print("     Known positives:")
+        
+        printmd("**Known positives:**")
 
         if tag is not None:
             for x in range(len(known_positives)):
@@ -186,7 +192,7 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
             for x in known_positives[:len(known_positives)]:
                 print("        %s" % x)
 
-        print("     Recommended:")
+        printmd("**Recommended:**")
         cnt = 0
         if tag is not None:
             for x in range(k):
@@ -200,10 +206,13 @@ def sample_test_recommendation(model, train, test, data_meta, user_ids, k, name,
                 if (x in known_positives.values):
                     cnt += 1
                     print('This one clicked')
-        print('cnt: ' + str(cnt))
-        print('k_p: ' + str(len(known_positives)))
+        #printmd('*cnt: *' + str(cnt))
+        printmd('*k_p: %s*'%str(len(known_positives)))
         p_k = cnt / k
-        print('precicion at k : ' + str(p_k))
+        printmd('*precicion at k : %s*'%str(p_k))
+        print('----------------------------------------------------------------------')
+        
+
 
 
 def print_log(row, header=False, spacing=12):
